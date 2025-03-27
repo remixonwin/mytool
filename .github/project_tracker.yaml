@@ -14,16 +14,16 @@ dependencies:
     - pytest==8.3.5  # Testing framework
     - black==25.1.0  # Code formatter
     - ruff==0.11.2   # Fast Python linter
-    
+
 configuration_files:
   - path: pyproject.toml
     purpose: Project metadata and build configuration
     current_state: Configured with basic project info and pytest settings
-  
+
   - path: ruff.toml
     purpose: Ruff linter configuration
     current_state: Set up with standard Python linting rules (E, F, B, I)
-    
+
   - path: .venv
     purpose: Virtual environment
     current_state: Created and configured with uv
@@ -57,16 +57,26 @@ development_workflow:
     tool: black
     status: Configured
     command: black .
-  
+    pre_commit: true
+
   linting:
     tool: ruff
     status: Configured
     command: ruff check .
-  
+    pre_commit: true
+
   testing:
     tool: pytest
     status: Configured
     command: python -m pytest
+
+  pre_commit:
+    status: Configured
+    hooks:
+      - black (formatting)
+      - ruff (linting)
+      - yaml validation
+      - file hygiene checks
 
 git:
   status: Initialized
@@ -81,13 +91,13 @@ next_steps:
   - Set up CI/CD pipeline
   - Add project documentation
   - Implement core functionality
-  
+
 model_context:
   important_notes:
     - Project uses uv for both package management and virtual environment
     - All development tools are installed in virtual environment
     - Test infrastructure is set up and working
-  
+
   semantic_context:
     main_purpose: Python tool project with modern development practices
     development_stage: Initial setup complete
