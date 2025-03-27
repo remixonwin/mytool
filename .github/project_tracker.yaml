@@ -1,0 +1,98 @@
+project:
+  name: mytool
+  version: 0.1.0
+  description: A Python project using uv package manager
+  last_updated: "2025-03-27"
+
+environment:
+  python_version: "3.12.3"
+  package_manager: "uv"
+  virtual_env: ".venv"
+
+dependencies:
+  development:
+    - pytest==8.3.5  # Testing framework
+    - black==25.1.0  # Code formatter
+    - ruff==0.11.2   # Fast Python linter
+    
+configuration_files:
+  - path: pyproject.toml
+    purpose: Project metadata and build configuration
+    current_state: Configured with basic project info and pytest settings
+  
+  - path: ruff.toml
+    purpose: Ruff linter configuration
+    current_state: Set up with standard Python linting rules (E, F, B, I)
+    
+  - path: .venv
+    purpose: Virtual environment
+    current_state: Created and configured with uv
+
+source_code:
+  main_module:
+    path: src/main.py
+    status: Created
+    features:
+      - Basic main() function implemented
+    todo: []
+
+tests:
+  status: Initial setup complete
+  files:
+    - path: tests/test_main.py
+      covers: src/main.py
+      test_cases:
+        - test_main: Tests basic output of main function
+
+project_structure:
+  src:
+    purpose: Source code directory
+    status: Basic structure set up
+  tests:
+    purpose: Test files directory
+    status: Basic structure set up with pytest configuration
+
+development_workflow:
+  formatting:
+    tool: black
+    status: Configured
+    command: black .
+  
+  linting:
+    tool: ruff
+    status: Configured
+    command: ruff check .
+  
+  testing:
+    tool: pytest
+    status: Configured
+    command: python -m pytest
+
+git:
+  status: Initialized
+  tracked_files:
+    - All project files
+  ignored_patterns:
+    - __pycache__
+    - .venv
+
+next_steps:
+  - Add more comprehensive test coverage
+  - Set up CI/CD pipeline
+  - Add project documentation
+  - Implement core functionality
+  
+model_context:
+  important_notes:
+    - Project uses uv for both package management and virtual environment
+    - All development tools are installed in virtual environment
+    - Test infrastructure is set up and working
+  
+  semantic_context:
+    main_purpose: Python tool project with modern development practices
+    development_stage: Initial setup complete
+    key_files_to_monitor:
+      - src/main.py        # Main implementation
+      - tests/test_main.py # Test coverage
+      - pyproject.toml     # Project configuration
+      - ruff.toml         # Linting rules
