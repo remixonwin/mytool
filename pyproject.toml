@@ -3,7 +3,7 @@ name = "mytool"
 version = "0.1.0"
 description = "A Python project using uv package manager"
 requires-python = ">=3.8"
-dependencies = []
+dependencies = ["jsonschema"]
 authors = [
     {name = "Your Name", email = "your.email@example.com"},
 ]
