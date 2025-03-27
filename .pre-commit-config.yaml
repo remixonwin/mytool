@@ -20,3 +20,13 @@ repos:
       - id: trailing-whitespace
       - id: check-added-large-files
       - id: debug-statements
+
+  - repo: local
+    hooks:
+      - id: update-project-tracker
+        name: Update Project Tracker
+        entry: .hooks/update_project_tracker.py
+        language: python
+        additional_dependencies: [PyYAML>=6.0]
+        pass_filenames: false
+        always_run: true
