@@ -10,7 +10,7 @@ environment:
   virtual_env: .venv
 dependencies:
   development:
-  - pre-commit-placeholder-package @ file:///home/remixonwin/.cache/pre-commit/repo736oite_
+  - pre-commit-placeholder-package @ file:///home/remixonwin/.cache/pre-commit/repo6vs51mi1
   - pyyaml==6.0.2
 configuration_files:
 - path: pyproject.toml

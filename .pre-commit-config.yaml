@@ -27,6 +27,6 @@ repos:
         name: Update Project Tracker
         entry: .hooks/update_project_tracker.py
         language: python
-        additional_dependencies: [PyYAML>=6.0]
+        additional_dependencies: [PyYAML>=6.0, jsonschema>=4.23.0]
         pass_filenames: false
         always_run: true

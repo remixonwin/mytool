@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 import yaml
+from jsonschema import ValidationError, validate
 
 
 def get_python_files():
@@ -55,6 +56,44 @@ def get_project_structure():
     return structure
 
 
+TRACKER_SCHEMA = {
+    "type": "object",
+    "required": ["project", "environment", "dependencies", "configuration_files"],
+    "properties": {
+        "project": {
+            "type": "object",
+            "required": ["name", "version"],
+            "properties": {
+                "name": {"type": "string"},
+                "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+                "description": {"type": "string"},
+                "repository": {"type": "string", "format": "uri"},
+            },
+        },
+        "environment": {
+            "type": "object",
+            "required": ["python_version", "package_manager"],
+            "properties": {
+                "python_version": {"type": "string"},
+                "package_manager": {"type": "string"},
+            },
+        },
+        "dependencies": {
+            "type": "object",
+            "required": ["development"],
+            "properties": {
+                "development": {"type": "array", "items": {"type": "string"}}
+            },
+        },
+        "git": {
+            "type": "object",
+            "required": ["ignored_patterns"],
+            "properties": {"ignored_patterns": {"type": "array"}},
+        },
+    },
+}
+
+
 def update_tracker(tracker_path: str) -> int:
     """Update the project tracker with current project state."""
     try:
@@ -82,6 +121,9 @@ def update_tracker(tracker_path: str) -> int:
             }
             with open(tracker_path, "w") as f:
                 yaml.dump(default_tracker, f, sort_keys=False, indent=2)
+                # Validate immediately after creation
+                validate(instance=default_tracker, schema=TRACKER_SCHEMA)
+
             data = default_tracker
         else:
             with open(tracker_path, "r") as f:
@@ -140,10 +182,22 @@ def update_tracker(tracker_path: str) -> int:
 
         # Write updated tracker
         with open(tracker_path, "w") as f:
-            yaml.dump(data, f, sort_keys=False, indent=2, default_flow_style=False)
+            yaml.dump(
+                data,
+                f,
+                sort_keys=False,
+                indent=2,
+                default_flow_style=False,
+                Dumper=yaml.SafeDumper,
+            )
+
+        # Validate against schema
+        validate(instance=data, schema=TRACKER_SCHEMA)
 
         return 0
-
+    except ValidationError as ve:
+        print(f"Validation failed: {ve.message}")
+        return 1
     except Exception as e:
         print(f"Error updating project tracker: {e}")
         return 1
