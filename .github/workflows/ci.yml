@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -35,10 +37,20 @@ jobs:
           $HOME/.local/bin/uv pip install -e .[test]
           $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML pdoc
       - name: Run pre-commit
+        id: pre-commit
+        continue-on-error: true
         run: |
           . .venv/bin/activate
           git config --global --add safe.directory /github/workspace
           SKIP=project-tracker pre-commit run --all-files
+      - name: Commit formatting changes
+        if: steps.pre-commit.outcome == 'failure' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Apply automatic code formatting" || true
+          git push
       - name: Run tests
         run: |
           . .venv/bin/activate
