@@ -64,4 +64,4 @@ jobs:
       - name: Update Project Tracker
         run: |
           . .venv/bin/activate
-          python .hooks/update_project_tracker.py || echo "Project tracker update failed but continuing"
+          python hooks/update_project_tracker.py || echo "Project tracker update failed but continuing"
