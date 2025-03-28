@@ -1,0 +1,10 @@
+version: 1
+
+model_endpoints:
+  - name: deepseek
+    provider: openai
+    base_url: "https://api.deepseek.com"
+    models:
+      - deepseek-chat
+    api_key: ${DEEPSEEK_API_KEY}
+    default: true

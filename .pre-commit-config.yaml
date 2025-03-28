@@ -1,0 +1,10 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: project-tracker
+        name: Project Tracker
+        entry: .venv/bin/python src/hooks/pre_commit.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit]

@@ -1,0 +1,80 @@
+[project]
+name = "pyboplate"
+version = "0.1.1"
+description = "A modern Python project template using uv for package management"
+requires-python = ">=3.8"
+dependencies = [
+    "jsonschema",
+    "pytest-cov>=4.1.0",
+    "toml",
+    "pyyaml",
+    "fast-agent-mcp",
+    "asyncio",
+    "openai",
+]
+authors = [
+    {name = "remixonwin", email = "remixonwin@gmail.com"},
+]
+readme = "README.md"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+docs = ["pdoc>=14.0.0", "openai"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 99
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov=src --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/__init__.py"]
+branch = true
+relative_files = true
+data_file = ".coverage"
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pyboplate"]
+only-include = ["src/pyboplate"]

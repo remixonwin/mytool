@@ -1,0 +1,185 @@
+project:
+  name: mytool
+  version: 0.1.0
+  description: A Python project using uv package manager
+  last_updated: '2025-03-27'
+  repository: https://github.com/remixonwin/mytool
+environment:
+  python_version: 3.12.3
+  package_manager: uv
+  virtual_env: .venv
+dependencies:
+  development:
+  - pre-commit-placeholder-package @ file:///home/remixonwin/.cache/pre-commit/repo6vs51mi1
+  - pyyaml==6.0.2
+configuration_files:
+- path: pyproject.toml
+  purpose: Project metadata and build configuration
+  current_state: Configured with basic project info, pytest settings, and PyPI publishing
+    metadata
+- path: ruff.toml
+  purpose: Ruff linter configuration
+  current_state: Set up with standard Python linting rules (E, F, B, I)
+- path: .venv
+  purpose: Virtual environment
+  current_state: Created and configured with uv
+- path: LICENSE
+  purpose: Project license
+  current_state: MIT License
+source_code:
+  main_module:
+    path: src/main.py
+    status: Created
+    features:
+    - CLI argument parsing
+    - Configuration management
+    - Core business logic
+    todo:
+    - Implement core functionality
+    - Add proper error handling
+    - Add CLI interface
+  files:
+  - path: src/__init__.py
+    status: Active
+    last_modified: '2025-03-27'
+  - path: src/pyboplate/main.py
+    status: Active
+    last_modified: '2025-03-27'
+tests:
+  status: Initial setup complete
+  coverage: Basic
+  files:
+  - path: tests/__init__.py
+    covers: tests/__init__.py
+    last_modified: '2025-03-27'
+  - path: tests/conftest.py
+    covers: tests/conftest.py
+    last_modified: '2025-03-27'
+  - path: tests/test_check_docs.py
+    covers: src/check_docs.py
+    last_modified: '2025-03-27'
+  - path: tests/test_configuration.py
+    covers: src/configuration.py
+    last_modified: '2025-03-27'
+  - path: tests/test_project_tracker.py
+    covers: src/project_tracker.py
+    last_modified: '2025-03-27'
+  - path: tests/test_workflows.py
+    covers: src/workflows.py
+    last_modified: '2025-03-27'
+project_structure:
+  .github:
+    project_tracker.yaml: .github/project_tracker.yaml
+    workflows:
+      cd.yml: .github/workflows/cd.yml
+      ci.yml: .github/workflows/ci.yml
+  .pre-commit-config.yaml: .pre-commit-config.yaml
+  README.md: README.md
+  hooks:
+    __init__.py: hooks/__init__.py
+    check_docs.py: hooks/check_docs.py
+    update_project_tracker.py: hooks/update_project_tracker.py
+  pyproject.toml: pyproject.toml
+  release_plan.md: release_plan.md
+  ruff.toml: ruff.toml
+  src:
+    __init__.py: src/__init__.py
+    pyboplate:
+      main.py: src/pyboplate/main.py
+  tests:
+    __init__.py: tests/__init__.py
+    conftest.py: tests/conftest.py
+    test_check_docs.py: tests/test_check_docs.py
+    test_configuration.py: tests/test_configuration.py
+    test_project_tracker.py: tests/test_project_tracker.py
+    test_workflows.py: tests/test_workflows.py
+development_workflow:
+  formatting:
+    tool: black
+    status: Configured
+    command: black .
+    pre_commit: true
+  linting:
+    tool: ruff
+    status: Configured
+    command: ruff check .
+    pre_commit: true
+  testing:
+    tool: pytest
+    status: Configured
+    command: python -m pytest
+  pre_commit:
+    status: Configured
+    hooks:
+    - black (formatting)
+    - ruff (linting)
+    - yaml validation
+    - file hygiene checks
+    - project tracker update
+git:
+  status: Setup complete
+  remote: origin
+  repository: https://github.com/remixonwin/mytool
+  tracked_files:
+  - src/**/*.py
+  - tests/**/*.py
+  - pyproject.toml
+  - ruff.toml
+  - .github/**/*.yml
+  ignored_patterns:
+  - All project files
+  - __pycache__
+  - .venv
+  - '*.pyc'
+  - dist/
+  - build/
+  - '*.egg-info/'
+ci_cd:
+  status: Implemented
+  ci:
+    provider: GitHub Actions
+    workflow: .github/workflows/ci.yml
+    actions:
+    - Run tests (pytest)
+    - Code formatting (black)
+    - Linting (ruff)
+    - Project tracker update
+    - Pre-commit checks
+    triggers:
+    - Push to main/master
+    - Pull requests to main/master
+  cd:
+    provider: GitHub Actions
+    workflow: .github/workflows/cd.yml
+    actions:
+    - Build Python package
+    - Publish to PyPI using trusted publishing
+    triggers:
+    - New release published
+next_steps:
+- Implement core functionality
+- Add comprehensive test coverage
+- Add detailed project documentation
+- Create first release to trigger CD pipeline
+- Set up GitHub repository documentation (wiki, contributing guidelines)
+model_context:
+  important_notes:
+  - Project uses uv for both package management and virtual environment
+  - All development tools are installed in virtual environment
+  - Test infrastructure is set up and working
+  - CI/CD pipelines implemented with GitHub Actions
+  - PyPI publishing configured with trusted publishing
+  semantic_context:
+    main_purpose: Python tool project with modern development practices
+    development_stage: Initial setup and CI/CD complete
+    key_files_to_monitor:
+    - src/main.py
+    - tests/test_main.py
+    - pyproject.toml
+    - ruff.toml
+    - .github/workflows/ci.yml
+    - .github/workflows/cd.yml
+documentation:
+  generated: false
+  last_updated: ''
+  tool: ''

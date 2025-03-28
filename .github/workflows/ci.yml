@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Set up virtual environment
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+
+      - name: Install dependencies
+        run: |
+          . .venv/bin/activate
+          which uv || (echo "uv not found in PATH" && exit 1)
+          $HOME/.local/bin/uv pip install -e .
+          $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML pdoc
+
+      - name: Run pre-commit
+        run: |
+          . .venv/bin/activate
+          pre-commit install --allow-missing-config
+          git config --global --add safe.directory /github/workspace
+          pre-commit run --all-files
+
+      - name: Generate documentation
+        run: |
+          . .venv/bin/activate
+          rm -rf docs/*
+          python -m pdoc -o docs/ src/
+
+      - name: Run tests with coverage
+        run: |
+          . .venv/bin/activate
+          python -m pytest --cov=src --cov-report=xml
+
+      - name: Update Project Tracker
+        run: |
+          . .venv/bin/activate
+          python hooks/update_project_tracker.py || echo "Project tracker update failed but continuing"
