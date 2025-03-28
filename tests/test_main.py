@@ -2,13 +2,13 @@
 
 import pytest
 
-from src.pybop.main import main
+from src.py_bop.main import main
 
 
 @pytest.mark.parametrize(
     "expected_output",
     [
-        ("Hello from pybop!\n"),
+        ("Hello from py_bop!\n"),
     ],
 )
 def test_main_output(capsys, expected_output):
