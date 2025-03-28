@@ -1,7 +1,7 @@
 [project]
-name = "mytool"
+name = "pybop"
 version = "0.1.1"
-description = "A Python project using uv package manager"
+description = "A modern Python project template using uv for package management"
 requires-python = ">=3.8"
 dependencies = [
     "jsonschema",
@@ -10,7 +10,7 @@ dependencies = [
     "pyyaml",
 ]
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "remixonwin", email = "remixonwin@gmail.com"},
 ]
 readme = "README.md"
 license = {text = "MIT"}
@@ -58,5 +58,5 @@ exclude_lines = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mytool"]
-only-include = ["src/mytool"]
+packages = ["src/pybop"]
+only-include = ["src/pybop"]
