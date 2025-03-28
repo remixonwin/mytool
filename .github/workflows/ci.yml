@@ -38,9 +38,11 @@ jobs:
           . .venv/bin/activate
           which uv || (echo "uv not found in PATH" && exit 1)
           $HOME/.local/bin/uv pip install -e .[test]
-          $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML pdoc fast_agent_mcp
-          # Verify fast_agent_mcp installation
-          python -c "import fast_agent_mcp; print(fast_agent_mcp.__file__)"
+          $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML pdoc
+          pip install fast-agent-mcp==0.1.13
+          # List installed packages and try both import names
+          pip list | grep -i agent
+          python -c "from fast_agent_mcp import MCPServer; print('Import successful')" || python -c "from fastagentmcp import MCPServer; print('Import successful')"
       - name: Run pre-commit
         id: pre-commit
         continue-on-error: true
@@ -63,7 +65,7 @@ jobs:
       - name: Build documentation
         run: |
           . .venv/bin/activate
-          # List all installed packages
-          pip freeze
+          pip list
           python -c "import sys; print('\n'.join(sys.path))"
+          python -c "from fast_agent_mcp import MCPServer; print('Import successful')" || python -c "from fastagentmcp import MCPServer; print('Import successful')"
           pdoc -o docs/ src/
