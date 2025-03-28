@@ -25,8 +25,35 @@ repos:
     hooks:
       - id: update-project-tracker
         name: Update Project Tracker
-        entry: .hooks/update_project_tracker.py
+        entry: hooks/update_project_tracker.py
         language: python
         additional_dependencies: [PyYAML>=6.0, jsonschema>=4.23.0]
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
+      - id: check-docs
+        name: Check Documentation
+        entry: hooks/check_docs.py
+        language: python
+        additional_dependencies: [pdoc>=15.0.0]
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest with coverage
+        entry: pytest
+        language: python
+        types: [python]
+        args: ["-v", "--cov=hooks", "--cov=src", "--cov-fail-under=90"]
+        additional_dependencies:
+          - pytest>=8.0.0
+          - pytest-cov>=6.0.0
+          - PyYAML>=6.0
+          - toml>=0.10.2
+          - jsonschema>=4.23.0
         pass_filenames: false
         always_run: true

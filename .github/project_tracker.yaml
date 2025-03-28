@@ -52,8 +52,23 @@ tests:
   - path: tests/__init__.py
     covers: tests/__init__.py
     last_modified: '2025-03-27'
+  - path: tests/conftest.py
+    covers: tests/conftest.py
+    last_modified: '2025-03-27'
+  - path: tests/test_check_docs.py
+    covers: src/check_docs.py
+    last_modified: '2025-03-27'
+  - path: tests/test_configuration.py
+    covers: src/configuration.py
+    last_modified: '2025-03-27'
   - path: tests/test_main.py
     covers: src/main.py
+    last_modified: '2025-03-27'
+  - path: tests/test_project_tracker.py
+    covers: src/project_tracker.py
+    last_modified: '2025-03-27'
+  - path: tests/test_workflows.py
+    covers: src/workflows.py
     last_modified: '2025-03-27'
 project_structure:
   .github:
@@ -61,10 +76,14 @@ project_structure:
     workflows:
       cd.yml: .github/workflows/cd.yml
       ci.yml: .github/workflows/ci.yml
-  .hooks:
-    update_project_tracker.py: .hooks/update_project_tracker.py
   .pre-commit-config.yaml: .pre-commit-config.yaml
+  DOC_PLAN.md: DOC_PLAN.md
   README.md: README.md
+  TEST_PLAN.md: TEST_PLAN.md
+  hooks:
+    __init__.py: hooks/__init__.py
+    check_docs.py: hooks/check_docs.py
+    update_project_tracker.py: hooks/update_project_tracker.py
   pyproject.toml: pyproject.toml
   ruff.toml: ruff.toml
   src:
@@ -72,7 +91,12 @@ project_structure:
     main.py: src/main.py
   tests:
     __init__.py: tests/__init__.py
+    conftest.py: tests/conftest.py
+    test_check_docs.py: tests/test_check_docs.py
+    test_configuration.py: tests/test_configuration.py
     test_main.py: tests/test_main.py
+    test_project_tracker.py: tests/test_project_tracker.py
+    test_workflows.py: tests/test_workflows.py
 development_workflow:
   formatting:
     tool: black
@@ -159,3 +183,7 @@ model_context:
     - ruff.toml
     - .github/workflows/ci.yml
     - .github/workflows/cd.yml
+documentation:
+  generated: false
+  last_updated: ''
+  tool: ''

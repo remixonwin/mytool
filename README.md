@@ -28,3 +28,14 @@ Run tests using:
 ```bash
 pytest
 ```
+
+## Documentation
+
+Generate API documentation:
+```bash
+uv pip install pdoc && pdoc -o docs/ src/
+```
+
+Serve documentation locally:
+```bash
+open docs/index.html```

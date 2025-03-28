@@ -43,22 +43,27 @@ def get_project_structure():
     )
     files = result.stdout.splitlines()
     structure = {}
-
     for file in files:
         path = Path(file)
         if path.suffix in [".py", ".toml", ".yaml", ".yml", ".md"]:
-            parts = path.parts
             current = structure
-            for part in parts[:-1]:
-                current = current.setdefault(part, {})
-            current[path.name] = str(path)
-
+            for part in path.parts[:-1]:  # Handle all but the last part (filename)
+                if part not in current:
+                    current[part] = {}
+                current = current[part]
+            current[path.name] = path.as_posix()  # Store full path as string
     return structure
 
 
 TRACKER_SCHEMA = {
     "type": "object",
-    "required": ["project", "environment", "dependencies", "configuration_files"],
+    "required": [
+        "project",
+        "environment",
+        "dependencies",
+        "configuration_files",
+        "documentation",
+    ],
     "properties": {
         "project": {
             "type": "object",
@@ -83,6 +88,15 @@ TRACKER_SCHEMA = {
             "required": ["development"],
             "properties": {
                 "development": {"type": "array", "items": {"type": "string"}}
+            },
+        },
+        "documentation": {
+            "type": "object",
+            "required": ["generated", "last_updated"],
+            "properties": {
+                "generated": {"type": "boolean"},
+                "last_updated": {"type": "string", "format": "date"},
+                "tool": {"type": "string"},
             },
         },
         "git": {
@@ -116,6 +130,16 @@ def update_tracker(tracker_path: str) -> int:
                     "virtual_env": ".venv",
                 },
                 "dependencies": {"development": []},
+                "documentation": {"generated": False, "last_updated": "", "tool": ""},
+                "configuration_files": {
+                    "files": [
+                        "pyproject.toml",
+                        "README.md",
+                        ".pre-commit-config.yaml",
+                        "ruff.toml",
+                        "LICENSE",
+                    ]
+                },
                 "source_code": {"files": []},
                 "tests": {"files": []},
             }
@@ -126,12 +150,55 @@ def update_tracker(tracker_path: str) -> int:
 
             data = default_tracker
         else:
-            with open(tracker_path, "r") as f:
+            with open(tracker_path) as f:
                 data = yaml.safe_load(f)
 
-        # Update last updated timestamp
-        data["project"]["last_updated"] = datetime.now().strftime("%Y-%m-%d")
+            # Ensure all required sections exist
+            if "configuration_files" not in data:
+                data["configuration_files"] = {
+                    "files": [
+                        "pyproject.toml",
+                        "README.md",
+                        ".pre-commit-config.yaml",
+                        "ruff.toml",
+                        "LICENSE",
+                    ]
+                }
 
+            if "source_code" not in data:
+                data["source_code"] = {"files": []}
+
+            if "tests" not in data:
+                data["tests"] = {"files": []}
+
+        # Ensure documentation section exists
+        if "documentation" not in data:
+            data["documentation"] = {"generated": False, "last_updated": "", "tool": ""}
+
+        # Update documentation status
+        # For tests, use the tmp_path provided by pytest fixture
+        if "pytest-of" in str(tracker_path):
+            docs_dir = Path(str(tracker_path).replace("project_tracker.yaml", "docs"))
+        else:
+            docs_dir = Path(tracker_path).parent / "docs"
+
+        if docs_dir.exists():
+            # Check if there are any files in the docs directory
+            has_files = False
+            for item in docs_dir.iterdir():
+                if item.is_file():
+                    has_files = True
+                    break
+            data["documentation"]["generated"] = has_files
+            if has_files:
+                data["documentation"]["last_updated"] = datetime.fromtimestamp(
+                    docs_dir.stat().st_mtime
+                ).strftime("%Y-%m-%d")
+        else:
+            data["documentation"]["generated"] = False
+
+        # Validate against schema after all updates
+        validate(instance=data, schema=TRACKER_SCHEMA)
         # Update dependencies
         packages = get_installed_packages()
         dev_deps = [

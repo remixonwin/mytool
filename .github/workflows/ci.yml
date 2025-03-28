@@ -37,7 +37,7 @@ jobs:
         run: |
           . .venv/bin/activate
           which uv || (echo "uv not found in PATH" && exit 1)
-          $HOME/.local/bin/uv pip install pytest black ruff pre-commit PyYAML
+          $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML
 
       - name: Run pre-commit
         run: |
@@ -46,10 +46,19 @@ jobs:
           git config --global --add safe.directory /github/workspace
           pre-commit run --all-files || echo "Pre-commit checks failed but continuing"
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
           . .venv/bin/activate
-          python -m pytest
+          python -m pytest --cov=src --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
 
       - name: Update Project Tracker
         run: |
