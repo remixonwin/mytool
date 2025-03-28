@@ -1,5 +1,5 @@
 [project]
-name = "py_bop"
+name = "py_bo_p"
 version = "0.1.1"
 description = "A modern Python project template using uv for package management"
 requires-python = ">=3.8"
@@ -58,5 +58,5 @@ exclude_lines = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/py_bop"]
-only-include = ["src/py_bop"]
+packages = ["src/py_bo_p"]
+only-include = ["src/py_bo_p"]
