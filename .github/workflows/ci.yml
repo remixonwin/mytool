@@ -38,7 +38,7 @@ jobs:
           . .venv/bin/activate
           which uv || (echo "uv not found in PATH" && exit 1)
           $HOME/.local/bin/uv pip install -e .
-          $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML
+          $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML pdoc
 
       - name: Run pre-commit
         run: |
