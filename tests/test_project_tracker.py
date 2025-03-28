@@ -312,7 +312,9 @@ def test_documentation_update_edge_cases(tmp_path):
         "builtins.open", mock_open(read_data=yaml.dump(mock_data))
     ), patch("subprocess.run") as mock_run, patch(
         "pathlib.Path", return_value=docs_dir
-    ), patch("hooks.update_project_tracker.datetime") as mock_datetime:
+    ), patch(
+        "hooks.update_project_tracker.datetime"
+    ) as mock_datetime:
         # Mock datetime for consistent results
         mock_datetime.now.return_value.strftime.return_value = "2025-03-27"
         mock_datetime.fromtimestamp.return_value.strftime.return_value = "2025-03-27"
