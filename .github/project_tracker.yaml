@@ -77,9 +77,7 @@ project_structure:
       cd.yml: .github/workflows/cd.yml
       ci.yml: .github/workflows/ci.yml
   .pre-commit-config.yaml: .pre-commit-config.yaml
-  DOC_PLAN.md: DOC_PLAN.md
   README.md: README.md
-  TEST_PLAN.md: TEST_PLAN.md
   hooks:
     __init__.py: hooks/__init__.py
     check_docs.py: hooks/check_docs.py
