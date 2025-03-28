@@ -312,7 +312,7 @@ def test_documentation_update_edge_cases(tmp_path):
         "builtins.open", mock_open(read_data=yaml.dump(mock_data))
     ), patch("subprocess.run") as mock_run, patch(
         "pathlib.Path", return_value=docs_dir
-    ), +patch(
+    ), patch(
         "os.path.getmtime", return_value=1711497600
     ), patch(
         "hooks.update_project_tracker.datetime"
