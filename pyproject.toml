@@ -1,5 +1,5 @@
 [project]
-name = "py_bo_p"
+name = "pyboplate"
 version = "0.1.1"
 description = "A modern Python project template using uv for package management"
 requires-python = ">=3.8"
@@ -58,5 +58,5 @@ exclude_lines = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/py_bo_p"]
-only-include = ["src/py_bo_p"]
+packages = ["src/pyboplate"]
+only-include = ["src/pyboplate"]
