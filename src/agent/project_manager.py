@@ -1,10 +1,12 @@
 import os
-from typing import Dict, Any, List, Optional
-import openai
 from datetime import datetime
+from typing import Any, Dict
 
-from .task_manager import TaskManager
+import openai
+
 from .data_store import ProjectDataStore
+from .task_manager import TaskManager
+
 
 class ProjectManager:
     """Manages project tracking and analysis using DeepSeek API."""
@@ -17,17 +19,17 @@ class ProjectManager:
 
     def setup_deepseek(self):
         """Configure DeepSeek API client."""
-        api_key = os.getenv('DEEPSEEK_API_KEY')
+        api_key = os.getenv("DEEPSEEK_API_KEY")
         if not api_key:
             raise ValueError("DEEPSEEK_API_KEY environment variable not set")
-        
+
         openai.api_key = api_key
         openai.api_base = "https://api.deepseek.com/v1"
 
     async def get_project_status(self, detailed: bool = False) -> Dict[str, Any]:
         """Get current project status including tasks, progress, and metrics."""
         basic_status = self.data_store.get_project_status()
-        
+
         if not detailed:
             return basic_status
 
@@ -39,41 +41,44 @@ class ProjectManager:
             **basic_status,
             "ai_insights": {
                 "task_summary": tasks_summary,
-                "latest_analysis": latest_analysis
-            }
+                "latest_analysis": latest_analysis,
+            },
         }
 
     async def analyze_risks(self, include_suggestions: bool = False) -> Dict[str, Any]:
         """Analyze project risks and optionally provide mitigation suggestions."""
-        # Gather project data for analysis
-        project_status = await self.get_project_status(detailed=True)
-        tasks = self.task_manager.list_tasks()
-
         try:
+            # Gather project data for analysis
+            project_status = await self.get_project_status(detailed=True)
+            tasks = self.task_manager.list_tasks()
+
             # Prepare context for DeepSeek analysis
             context = {
                 "tasks": tasks,
                 "status": project_status,
-                "latest_analysis": self.data_store.get_latest_analysis()
+                "latest_analysis": self.data_store.get_latest_analysis(),
             }
 
-            messages = [
-                {
-                    "role": "system",
-                    "content": "You are a project risk analysis expert. Analyze the following project data and identify potential risks and their severity."
-                },
-                {
-                    "role": "user",
-                    "content": f"Project data to analyze:\n{str(context)}"
-                }
-            ]
+            system_content = (
+                "You are a project risk analysis expert. Analyze the project data "
+                "and identify potential risks and their severity."
+            )
 
             if include_suggestions:
-                messages[0]["content"] += " Also provide specific mitigation suggestions for each identified risk."
+                system_content += (
+                    " Also provide specific mitigation suggestions for each identified risk."
+                )
+
+            messages = [
+                {"role": "system", "content": system_content},
+                {
+                    "role": "user",
+                    "content": f"Project data to analyze:\n{str(context)}",
+                },
+            ]
 
             response = await openai.ChatCompletion.acreate(
-                model="deepseek-chat",
-                messages=messages
+                model="deepseek-chat", messages=messages
             )
 
             analysis = response.choices[0].message.content
@@ -82,16 +87,17 @@ class ProjectManager:
                 "analysis": analysis,
                 "data_snapshot": {
                     "task_count": len(tasks),
-                    "status_summary": project_status.get("tasks", {}).get("count", 0)
-                }
+                    "status_summary": project_status.get("tasks", {}).get("count", 0),
+                },
             }
 
             # Save the risk analysis
-            self.data_store.save_data('analyses', f'risk_analysis_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}', result)
+            timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+            self.data_store.save_data("analyses", f"risk_analysis_{timestamp}", result)
             return result
 
-        except Exception as e:
-            raise RuntimeError(f"Failed to analyze project risks: {str(e)}")
+        except Exception as err:
+            raise RuntimeError("Failed to analyze project risks") from err
 
     async def generate_report(self, report_format: str = "markdown") -> Dict[str, Any]:
         """Generate a comprehensive project report."""
@@ -106,21 +112,23 @@ class ProjectManager:
                 "project_status": status,
                 "risk_analysis": risks,
                 "tasks": tasks,
-                "format": report_format
+                "format": report_format,
             }
+
+            report_prompt = (
+                f"Generate a comprehensive project report in {report_format} format. "
+                "Include status overview, task progress, risks, and recommendations."
+            )
 
             response = await openai.ChatCompletion.acreate(
                 model="deepseek-chat",
                 messages=[
-                    {
-                        "role": "system",
-                        "content": f"Generate a comprehensive project report in {report_format} format. Include status overview, task progress, risks, and recommendations."
-                    },
+                    {"role": "system", "content": report_prompt},
                     {
                         "role": "user",
-                        "content": f"Project data for report:\n{str(context)}"
-                    }
-                ]
+                        "content": f"Project data for report:\n{str(context)}",
+                    },
+                ],
             )
 
             report_content = response.choices[0].message.content
@@ -130,38 +138,39 @@ class ProjectManager:
                 "generated_at": datetime.utcnow().isoformat(),
                 "metadata": {
                     "task_count": len(tasks),
-                    "risk_count": len(risks.get("analysis", "").split("\n"))
-                }
+                    "risk_count": len(risks.get("analysis", "").split("\n")),
+                },
             }
 
             # Save the report
-            self.data_store.save_data('reports', f'report_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}', report)
+            timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+            self.data_store.save_data("reports", f"report_{timestamp}", report)
             return report
 
-        except Exception as e:
-            raise RuntimeError(f"Failed to generate project report: {str(e)}")
+        except Exception as err:
+            raise RuntimeError("Failed to generate project report") from err
 
     async def process_commit_analysis(self, analysis: Dict[str, Any]):
         """Process and store commit analysis results."""
         if analysis.get("status") == "success":
             # Store the analysis
             self.data_store.save_analysis(analysis)
-            
+
             # Update project metrics
             metrics = {
                 "last_commit": {
                     "timestamp": analysis["timestamp"],
                     "files_changed": len(analysis["files_changed"]),
-                    "analysis": analysis["analysis"]
+                    "analysis": analysis["analysis"],
                 },
-                "generated_at": datetime.utcnow().isoformat()
+                "generated_at": datetime.utcnow().isoformat(),
             }
             self.data_store.save_metrics("latest", metrics)
 
-            # Create a task if significant changes are detected
-            if len(analysis["files_changed"]) > 5:  # Threshold for significant changes
+            # Create task for significant changes
+            if len(analysis["files_changed"]) > 5:
                 await self.task_manager.create_task(
                     title="Review Major Code Changes",
                     description=f"Significant changes detected in commit:\n{analysis['analysis']}",
-                    priority="high"
+                    priority="high",
                 )

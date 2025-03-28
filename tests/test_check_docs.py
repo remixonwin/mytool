@@ -9,9 +9,10 @@ def test_check_docs_success(tmp_path):
         mock_path_instance = mock_path.return_value
         mock_path_instance.exists.return_value = True
 
-        with patch("hooks.check_docs.shutil.rmtree") as mock_rmtree, patch(
-            "hooks.check_docs.subprocess.run"
-        ) as mock_run:
+        with (
+            patch("hooks.check_docs.shutil.rmtree") as mock_rmtree,
+            patch("hooks.check_docs.subprocess.run") as mock_run,
+        ):
             mock_run.return_value.returncode = 0
             assert main() == 0
 
@@ -34,9 +35,10 @@ def test_check_docs_subprocess_error(tmp_path):
         mock_path_instance = mock_path.return_value
         mock_path_instance.exists.return_value = True
 
-        with patch("hooks.check_docs.shutil.rmtree") as mock_rmtree, patch(
-            "hooks.check_docs.subprocess.run"
-        ) as mock_run:
+        with (
+            patch("hooks.check_docs.shutil.rmtree") as mock_rmtree,
+            patch("hooks.check_docs.subprocess.run") as mock_run,
+        ):
             mock_run.side_effect = CalledProcessError(1, "pdoc", stderr="Error message")
             assert main() == 1
 

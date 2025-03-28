@@ -220,8 +220,9 @@ def test_validation_error_handling(tmp_path):
         },
     }
 
-    with patch("builtins.open", mock_open(read_data=yaml.dump(invalid_data))), patch(
-        "os.path.exists", return_value=True
+    with (
+        patch("builtins.open", mock_open(read_data=yaml.dump(invalid_data))),
+        patch("os.path.exists", return_value=True),
     ):
         result = update_tracker(str(tracker_path))
         assert result == 1
@@ -230,8 +231,10 @@ def test_validation_error_handling(tmp_path):
 def test_subprocess_error_handling(tmp_path):
     tracker_path = tmp_path / "project_tracker.yaml"
 
-    with patch("subprocess.run") as mock_run, patch("os.path.exists", return_value=True), patch(
-        "builtins.open", mock_open()
+    with (
+        patch("subprocess.run") as mock_run,
+        patch("os.path.exists", return_value=True),
+        patch("builtins.open", mock_open()),
     ):
         mock_run.side_effect = subprocess.CalledProcessError(1, "git ls-files")
         result = update_tracker(str(tracker_path))
@@ -256,9 +259,12 @@ def test_documentation_generated_status(tmp_path):
         },
     }
 
-    with patch("os.path.exists", return_value=True), patch(
-        "builtins.open", mock_open(read_data=yaml.dump(mock_data))
-    ), patch("subprocess.run") as mock_run, patch("pathlib.Path", return_value=docs_dir):
+    with (
+        patch("os.path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=yaml.dump(mock_data))),
+        patch("subprocess.run") as mock_run,
+        patch("pathlib.Path", return_value=docs_dir),
+    ):
         mock_run.return_value.stdout = ""
         mock_run.return_value.returncode = 0
         result = update_tracker(str(tracker_path))
@@ -279,9 +285,11 @@ def test_missing_optional_sections(tmp_path):
         },
     }
 
-    with patch("builtins.open", mock_open(read_data=yaml.dump(minimal_data))), patch(
-        "os.path.exists", return_value=True
-    ), patch("subprocess.run") as mock_run:
+    with (
+        patch("builtins.open", mock_open(read_data=yaml.dump(minimal_data))),
+        patch("os.path.exists", return_value=True),
+        patch("subprocess.run") as mock_run,
+    ):
         mock_run.return_value.stdout = ""
         mock_run.return_value.returncode = 0
         result = update_tracker(str(tracker_path))
@@ -306,13 +314,14 @@ def test_documentation_update_edge_cases(tmp_path):
         },
     }
 
-    with patch("os.path.exists", return_value=True), patch(
-        "builtins.open", mock_open(read_data=yaml.dump(mock_data))
-    ), patch("subprocess.run") as mock_run, patch("pathlib.Path", return_value=docs_dir), patch(
-        "os.path.getmtime", return_value=1711497600
-    ), patch(
-        "hooks.update_project_tracker.datetime"
-    ) as mock_datetime:
+    with (
+        patch("os.path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=yaml.dump(mock_data))),
+        patch("subprocess.run") as mock_run,
+        patch("pathlib.Path", return_value=docs_dir),
+        patch("os.path.getmtime", return_value=1711497600),
+        patch("hooks.update_project_tracker.datetime") as mock_datetime,
+    ):
         # Mock datetime for consistent results
         mock_datetime.now.return_value.strftime.return_value = "2025-03-27"
         mock_datetime.fromtimestamp.return_value.strftime.return_value = "2025-03-27"
@@ -339,9 +348,10 @@ def test_documentation_update_edge_cases(tmp_path):
 
 def test_documentation_dir_error_handling(tracker_path):
     """Test error handling when docs directory has permission issues."""
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.iterdir"
-    ) as mock_iterdir:
+    with (
+        patch("pathlib.Path.exists") as mock_exists,
+        patch("pathlib.Path.iterdir") as mock_iterdir,
+    ):
         # Make exists() return True but iterdir() raise PermissionError
         mock_exists.return_value = True
         mock_iterdir.side_effect = PermissionError("Permission denied")
@@ -428,9 +438,11 @@ def test_docs_dir_stat_error(tracker_path):
     docs_dir = Path(tracker_path).parent / "docs"
     docs_dir.mkdir(exist_ok=True)
 
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.iterdir"
-    ) as mock_iterdir, patch("pathlib.Path.stat") as mock_stat:
+    with (
+        patch("pathlib.Path.exists") as mock_exists,
+        patch("pathlib.Path.iterdir") as mock_iterdir,
+        patch("pathlib.Path.stat") as mock_stat,
+    ):
         mock_exists.return_value = True
         mock_iterdir.return_value = [docs_dir / "index.html"]  # Simulate a file exists
         mock_stat.side_effect = OSError("Permission denied")
@@ -495,9 +507,10 @@ def test_iterdir_empty_docs_dir(tracker_path):
     docs_dir = Path(tracker_path).parent / "docs"
     docs_dir.mkdir(exist_ok=True)
 
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.iterdir"
-    ) as mock_iterdir:
+    with (
+        patch("pathlib.Path.exists") as mock_exists,
+        patch("pathlib.Path.iterdir") as mock_iterdir,
+    ):
         mock_exists.return_value = True
         mock_iterdir.side_effect = StopIteration()  # Simulate empty directory with error
 
@@ -555,9 +568,10 @@ def test_docs_dir_complex_structure(tracker_path):
 
     mock_time = 1711497600  # 2024-03-27 00:00:00
 
-    with patch("os.path.getmtime") as mock_getmtime, patch(
-        "hooks.update_project_tracker.datetime"
-    ) as mock_datetime:
+    with (
+        patch("os.path.getmtime") as mock_getmtime,
+        patch("hooks.update_project_tracker.datetime") as mock_datetime,
+    ):
         # Mock the modification time for consistent testing
         mock_getmtime.return_value = mock_time
         mock_datetime.fromtimestamp.return_value.strftime.return_value = "2024-03-27"
@@ -607,9 +621,10 @@ def test_docs_dir_complex_yaml_error(tracker_path):
 
 def test_docs_dir_path_error(tracker_path):
     """Test handling of path-related errors in documentation handling."""
-    with patch("pathlib.Path.parent", new_callable=PropertyMock) as mock_parent, patch(
-        "subprocess.run"
-    ) as mock_run:
+    with (
+        patch("pathlib.Path.parent", new_callable=PropertyMock) as mock_parent,
+        patch("subprocess.run") as mock_run,
+    ):
         # Mock parent property to raise error
         mock_parent.side_effect = RuntimeError("Path error")
         # Mock subprocess to prevent other errors

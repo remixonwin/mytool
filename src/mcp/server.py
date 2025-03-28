@@ -1,7 +1,10 @@
-from typing import Dict, Any
-from fast_agent_mcp import MCPServer, Tool, Resource, ResourceProvider
-from ..agent.project_manager import ProjectManager
+from typing import Any, Dict
+
+from fast_agent_mcp import MCPServer, Resource, ResourceProvider, Tool
+
 from ..agent.data_store import ProjectDataStore
+from ..agent.project_manager import ProjectManager
+
 
 class ProjectTrackerServer(MCPServer):
     def __init__(self):
@@ -22,11 +25,11 @@ class ProjectTrackerServer(MCPServer):
                         "detailed": {
                             "type": "boolean",
                             "default": False,
-                            "description": "Whether to return detailed status"
+                            "description": "Whether to return detailed status",
                         }
-                    }
+                    },
                 },
-                handler=self.handle_get_project_status
+                handler=self.handle_get_project_status,
             )
         )
 
@@ -40,11 +43,11 @@ class ProjectTrackerServer(MCPServer):
                         "include_suggestions": {
                             "type": "boolean",
                             "default": False,
-                            "description": "Whether to include risk mitigation suggestions"
+                            "description": "Whether to include risk mitigation suggestions",
                         }
-                    }
+                    },
                 },
-                handler=self.handle_analyze_risks
+                handler=self.handle_analyze_risks,
             )
         )
 
@@ -59,11 +62,11 @@ class ProjectTrackerServer(MCPServer):
                             "type": "string",
                             "enum": ["markdown", "json"],
                             "default": "markdown",
-                            "description": "Output format for the report"
+                            "description": "Output format for the report",
                         }
-                    }
+                    },
                 },
-                handler=self.handle_generate_report
+                handler=self.handle_generate_report,
             )
         )
 
@@ -86,6 +89,7 @@ class ProjectTrackerServer(MCPServer):
         report_format = args.get("format", "markdown")
         return await self.project_manager.generate_report(report_format)
 
+
 class ProjectDataProvider(ResourceProvider):
     def __init__(self, data_store: ProjectDataStore):
         super().__init__()
@@ -97,21 +101,22 @@ class ProjectDataProvider(ResourceProvider):
             return Resource(
                 uri=uri,
                 content_type="application/json",
-                data={"tasks": self.data_store.list_files("tasks")}
+                data={"tasks": self.data_store.list_files("tasks")},
             )
         elif uri == "project://progress":
             return Resource(
                 uri=uri,
                 content_type="application/json",
-                data={"progress": self.data_store.load_data("progress", "latest")}
+                data={"progress": self.data_store.load_data("progress", "latest")},
             )
         elif uri == "project://metrics":
             return Resource(
                 uri=uri,
                 content_type="application/json",
-                data={"metrics": self.data_store.load_data("metrics", "latest")}
+                data={"metrics": self.data_store.load_data("metrics", "latest")},
             )
         return None
+
 
 if __name__ == "__main__":
     server = ProjectTrackerServer()

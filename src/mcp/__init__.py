@@ -1,3 +1,3 @@
-from .server import ProjectTrackerServer, ProjectDataProvider
+from .server import ProjectDataProvider, ProjectTrackerServer
 
-__all__ = ['ProjectTrackerServer', 'ProjectDataProvider']
+__all__ = ["ProjectTrackerServer", "ProjectDataProvider"]
