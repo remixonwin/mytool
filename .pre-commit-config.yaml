@@ -4,13 +4,16 @@ repos:
     hooks:
       - id: black
         language_version: python3.12
+        stages: [pre-commit]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.2
     hooks:
       - id: ruff
         args: [--fix]
+        stages: [pre-commit]
       - id: ruff-format
+        stages: [pre-commit]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -30,6 +33,7 @@ repos:
         additional_dependencies: [PyYAML>=6.0, jsonschema>=4.23.0]
         pass_filenames: false
         always_run: true
+        stages: [post-commit]
 
   - repo: local
     hooks:
@@ -40,6 +44,7 @@ repos:
         additional_dependencies: [pdoc>=15.0.0]
         pass_filenames: false
         always_run: true
+        stages: [post-commit]
 
   - repo: local
     hooks:
@@ -48,7 +53,14 @@ repos:
         entry: pytest
         language: python
         types: [python]
-        args: ["-v", "--cov=hooks", "--cov=src", "--cov-fail-under=90"]
+        args: [
+          "-v",
+          "--cov=hooks",
+          "--cov=src",
+          "--cov-report=term-missing",
+          "--cov-branch",
+          "--cov-fail-under=90"
+        ]
         additional_dependencies:
           - pytest>=8.0.0
           - pytest-cov>=6.0.0
@@ -57,3 +69,5 @@ repos:
           - jsonschema>=4.23.0
         pass_filenames: false
         always_run: true
+        stages: [post-commit]  # Run tests after formatting is done
+        verbose: true

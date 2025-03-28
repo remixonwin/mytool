@@ -1,9 +1,10 @@
 from unittest.mock import patch
 
-from hooks.check_docs import main
+from hooks.check_docs import main, normalize_file_content
 
 
 def test_check_docs_success(tmp_path):
+    """Test successful documentation generation."""
     with patch("hooks.check_docs.Path") as mock_path:
         mock_path_instance = mock_path.return_value
         mock_path_instance.exists.return_value = True
@@ -26,6 +27,7 @@ def test_check_docs_success(tmp_path):
 
 
 def test_check_docs_subprocess_error(tmp_path):
+    """Test error handling during documentation generation."""
     from subprocess import CalledProcessError
 
     with patch("hooks.check_docs.Path") as mock_path:
@@ -44,6 +46,7 @@ def test_check_docs_subprocess_error(tmp_path):
 
 
 def test_check_docs_no_existing_docs():
+    """Test documentation generation when docs directory doesn't exist."""
     with patch("hooks.check_docs.Path") as mock_path:
         mock_path_instance = mock_path.return_value
         mock_path_instance.exists.return_value = False
@@ -59,13 +62,13 @@ def test_check_docs_no_existing_docs():
 def test_normalize_line_endings_converts_windows_to_unix(tmp_path):
     """Test that Windows line endings (\r\n) are converted to Unix (\n)."""
     test_file = tmp_path / "test.html"
-    test_file.write_text("Line1\r\nLine2\r\n")
+    test_file.write_bytes(b"Line1\r\nLine2\r\n")
 
-    from hooks.check_docs import normalize_line_endings
+    normalize_file_content(tmp_path)
 
-    normalize_line_endings(tmp_path)
-
-    assert test_file.read_text() == "Line1\nLine2\n"
+    content = test_file.read_bytes()
+    assert b"\r\n" not in content
+    assert content == b"Line1\nLine2\n"
 
 
 def test_normalize_line_endings_adds_missing_newline(tmp_path):
@@ -73,21 +76,26 @@ def test_normalize_line_endings_adds_missing_newline(tmp_path):
     test_file = tmp_path / "test.js"
     test_file.write_text("Line1\nLine2")
 
-    from hooks.check_docs import normalize_line_endings
+    normalize_file_content(tmp_path)
 
-    normalize_line_endings(tmp_path)
-
-    assert test_file.read_text() == "Line1\nLine2\n"
+    content = test_file.read_text()
+    assert content.endswith("\n")
+    assert content == "Line1\nLine2\n"
 
 
 def test_normalize_line_endings_ignores_non_html_js_files(tmp_path):
     """Test that only .html and .js files are processed."""
-    test_file = tmp_path / "test.html"
-    original_content = "Line1\r\nLine2"
-    test_file.write_text(original_content)
+    html_file = tmp_path / "test.html"
+    txt_file = tmp_path / "test.txt"
 
-    from hooks.check_docs import normalize_line_endings
+    # Use bytes to avoid automatic line ending conversion
+    html_content = b"Line1\r\nLine2"
+    txt_content = b"Line1\r\nLine2"
 
-    normalize_line_endings(tmp_path)
+    html_file.write_bytes(html_content)
+    txt_file.write_bytes(txt_content)
 
-    assert test_file.read_text() == "Line1\nLine2\n"
+    normalize_file_content(tmp_path)
+
+    assert b"\r\n" not in html_file.read_bytes()  # HTML file should be normalized
+    assert txt_file.read_bytes() == txt_content  # TXT file should be unchanged
