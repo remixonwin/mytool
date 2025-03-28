@@ -42,7 +42,10 @@ source_code:
   - path: src/__init__.py
     status: Active
     last_modified: '2025-03-27'
-  - path: src/main.py
+  - path: src/pybop/__init__.py
+    status: Active
+    last_modified: '2025-03-27'
+  - path: src/pybop/main.py
     status: Active
     last_modified: '2025-03-27'
 tests:
@@ -83,10 +86,13 @@ project_structure:
     check_docs.py: hooks/check_docs.py
     update_project_tracker.py: hooks/update_project_tracker.py
   pyproject.toml: pyproject.toml
+  release_plan.md: release_plan.md
   ruff.toml: ruff.toml
   src:
     __init__.py: src/__init__.py
-    main.py: src/main.py
+    pybop:
+      __init__.py: src/pybop/__init__.py
+      main.py: src/pybop/main.py
   tests:
     __init__.py: tests/__init__.py
     conftest.py: tests/conftest.py
