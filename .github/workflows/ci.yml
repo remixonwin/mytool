@@ -39,6 +39,8 @@ jobs:
           which uv || (echo "uv not found in PATH" && exit 1)
           $HOME/.local/bin/uv pip install -e .[test]
           $HOME/.local/bin/uv pip install pytest pytest-cov black ruff pre-commit PyYAML pdoc fast_agent_mcp
+          # Verify fast_agent_mcp installation
+          python -c "import fast_agent_mcp; print(fast_agent_mcp.__file__)"
       - name: Run pre-commit
         id: pre-commit
         continue-on-error: true
@@ -61,4 +63,7 @@ jobs:
       - name: Build documentation
         run: |
           . .venv/bin/activate
+          # List all installed packages
+          pip freeze
+          python -c "import sys; print('\n'.join(sys.path))"
           pdoc -o docs/ src/
