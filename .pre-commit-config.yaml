@@ -39,7 +39,7 @@ repos:
         additional_dependencies: [pdoc>=15.0.0]
         pass_filenames: false
         always_run: true
-        stages: [post-commit]
+        stages: [pre-commit]
 
   - repo: local
     hooks:
