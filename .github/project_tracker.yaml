@@ -42,6 +42,9 @@ source_code:
   - path: src/__init__.py
     status: Active
     last_modified: '2025-03-27'
+  - path: src/py_bop/main.py
+    status: Active
+    last_modified: '2025-03-27'
   - path: src/pybop/__init__.py
     status: Active
     last_modified: '2025-03-27'
@@ -90,6 +93,8 @@ project_structure:
   ruff.toml: ruff.toml
   src:
     __init__.py: src/__init__.py
+    py_bop:
+      main.py: src/py_bop/main.py
     pybop:
       __init__.py: src/pybop/__init__.py
       main.py: src/pybop/main.py
