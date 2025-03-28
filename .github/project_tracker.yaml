@@ -42,19 +42,7 @@ source_code:
   - path: src/__init__.py
     status: Active
     last_modified: '2025-03-27'
-  - path: src/py_bo_p/__init__.py
-    status: Active
-    last_modified: '2025-03-27'
-  - path: src/py_bo_p/main.py
-    status: Active
-    last_modified: '2025-03-27'
-  - path: src/py_bop/main.py
-    status: Active
-    last_modified: '2025-03-27'
-  - path: src/pybop/__init__.py
-    status: Active
-    last_modified: '2025-03-27'
-  - path: src/pybop/main.py
+  - path: src/pyboplate/main.py
     status: Active
     last_modified: '2025-03-27'
 tests:
@@ -72,9 +60,6 @@ tests:
     last_modified: '2025-03-27'
   - path: tests/test_configuration.py
     covers: src/configuration.py
-    last_modified: '2025-03-27'
-  - path: tests/test_main.py
-    covers: src/main.py
     last_modified: '2025-03-27'
   - path: tests/test_project_tracker.py
     covers: src/project_tracker.py
@@ -99,20 +84,13 @@ project_structure:
   ruff.toml: ruff.toml
   src:
     __init__.py: src/__init__.py
-    py_bo_p:
-      __init__.py: src/py_bo_p/__init__.py
-      main.py: src/py_bo_p/main.py
-    py_bop:
-      main.py: src/py_bop/main.py
-    pybop:
-      __init__.py: src/pybop/__init__.py
-      main.py: src/pybop/main.py
+    pyboplate:
+      main.py: src/pyboplate/main.py
   tests:
     __init__.py: tests/__init__.py
     conftest.py: tests/conftest.py
     test_check_docs.py: tests/test_check_docs.py
     test_configuration.py: tests/test_configuration.py
-    test_main.py: tests/test_main.py
     test_project_tracker.py: tests/test_project_tracker.py
     test_workflows.py: tests/test_workflows.py
 development_workflow:

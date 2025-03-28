@@ -325,7 +325,7 @@ def test_documentation_update_edge_cases(tmp_path):
                 return subprocess.CompletedProcess(
                     args=args,
                     returncode=0,
-                    stdout="src/pybop/main.py\ntests/test_main.py\n",
+                    stdout="src/pyboplate/main.py\ntests/test_main.py\n",
                     stderr="",
                 )
             if "uv" in args[0]:
