@@ -50,7 +50,8 @@ jobs:
       - name: Generate documentation
         run: |
           . .venv/bin/activate
-          python -m pdoc --html --output-dir docs/ src/
+          rm -rf docs/*
+          python -m pdoc -o docs/ src/
 
       - name: Run tests with coverage
         run: |
